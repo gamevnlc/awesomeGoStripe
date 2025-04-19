@@ -37,7 +37,7 @@
 
         <hr>
 
-        <a href="javascript:void(0)" class="pay-button" onclick="val(0)">Charge Card</a>
+        <a href="javascript:void(0)" class="pay-button" onclick="val()">Charge Card</a>
     </form>
 {{end}}
 
@@ -45,8 +45,46 @@
     <script src="https://js.stripe.com/v3/"></script>
 
     <script>
+        let card;
+        let stripe;
+
+        stripe = Stripe("pk_test_51RFRZEPvINnUJHq0QfK8amIPEpfBWqnbHMUcLJn3dehwcKoMKMwZWF8CIWsiAuYhgEs9yG5tl5Y35uxJUkD29ZEV00tTyvWuPr");
+
+
         function val() {
-            
+
         }
+
+        (function () {
+            // Create stripe & elements
+            const elements = stripe.elements()
+            const style = {
+                base: {
+                    fontSize: '16px',
+                    lineHeight: '24px',
+
+                }
+            }
+
+            // create card entry
+
+            card = elements.create('card', {
+                style: style,
+                hidePostCode: true
+            })
+            card.mount("#card-element")
+
+            // check for input errors
+            card.addEventListener("change", function (event) {
+                let displayError = document.getElementById("card-errors")
+                if (event.error) {
+                    displayError.classList.remove('d-none')
+                    displayError.textContent = event.error.message
+                } else {
+                    displayError.classList.add('d-none')
+                    displayError.textContent = ''
+                }
+            })
+        })()
     </script>
 {{end}}
