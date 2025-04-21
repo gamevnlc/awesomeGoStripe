@@ -24,7 +24,7 @@
 
         <div class="mb-3">
             <label for="cardholder-email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="cardholder-email" name="cardholder_email" required autocomplete="cardholder-email-new">
+            <input type="email" class="form-control" id="cardholder-email" name="email" required autocomplete="cardholder-email-new">
         </div>
         
         <div class="mb-3">
@@ -142,11 +142,12 @@
                                     // we have charged the card
                                     document.getElementById("payment_method").value = result.paymentIntent.payment_method_types[0]
                                     document.getElementById("payment_intent").value = result.paymentIntent.id
-                                    document.getElementById("payment_amount").value = result.paymentIntent.amout
+                                    document.getElementById("payment_amount").value = result.paymentIntent.amount
                                     document.getElementById("payment_currency").value = result.paymentIntent.currency
                                     processing.classList.add('d-none')
                                     showCardSuccess()
                                     // would submit the form
+                                    document.getElementById("charge_form").submit()
                                 }
                             }
                         })
