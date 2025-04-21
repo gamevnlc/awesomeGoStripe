@@ -81,3 +81,4 @@ fabric.properties
 /tmp/main.exe
 /.air.toml
 /tmp/
+/.api.toml
