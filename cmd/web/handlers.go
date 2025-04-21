@@ -42,3 +42,11 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 		app.errorLog.Println(err)
 	}
 }
+
+// ChargeOnce displays the page to buy one the produce
+func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
+	err := app.renderTemplate(w, r, "buy-once", nil)
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+}
