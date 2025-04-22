@@ -82,3 +82,4 @@ fabric.properties
 /.air.toml
 /tmp/
 /.api.toml
+/database.yml
