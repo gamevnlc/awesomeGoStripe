@@ -92,10 +92,53 @@ func (m *DBModel) GetWidget(id int) (Widget, error) {
 	var widget Widget
 
 	//goland:noinspection ALL
-	row := m.DB.QueryRowContext(ctx, "select id, name from widgets where id = $1", id)
-	err := row.Scan(&widget.ID, &widget.Name)
+	row := m.DB.QueryRowContext(ctx, `
+		select id, name, description, inventory_level, price, image,
+	    created_at, updated_at 
+		from 
+		    widgets 
+		where id = $1
+	`, id)
+	err := row.Scan(
+		&widget.ID,
+		&widget.Name,
+		&widget.Description,
+		&widget.InventoryLevel,
+		&widget.Price,
+		&widget.Image,
+		&widget.CreatedAt,
+		&widget.UpdatedAt,
+	)
 	if err != nil {
 		return widget, err
 	}
 	return widget, nil
+}
+
+// InsertTransaction insert a new txn and returns new its id
+func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var newTransactionID int
+	//goland:noinspection ALL
+	stmt := `
+		insert into transactions (amount, currency, last_four, bank_return_code,
+		                          transaction_status_id, created_at, updated_at)
+		values ($1, $2, $3, $4, $5, $6, $7)
+	`
+	err := m.DB.QueryRowContext(ctx, stmt,
+		txn.Amount,
+		txn.Currency,
+		txn.LastFour,
+		txn.BackReturnCode,
+		txn.TransactionStatusID,
+		time.Now(),
+		time.Now(),
+	).Scan(&newTransactionID)
+	if err != nil {
+		return 0, err
+	}
+
+	return newTransactionID, nil
 }
