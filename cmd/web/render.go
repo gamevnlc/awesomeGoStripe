@@ -64,9 +64,10 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, p
 	return nil
 }
 
-func (app *application) parseTemplate(partials []string, page string, templateToRender string) (*template.Template, error) {
+func (app *application) parseTemplate(partials []string, page, templateToRender string) (*template.Template, error) {
 	var t *template.Template
 	var err error
+
 	// build partials
 	if len(partials) > 0 {
 		for i, x := range partials {
@@ -83,6 +84,7 @@ func (app *application) parseTemplate(partials []string, page string, templateTo
 		app.errorLog.Println(err)
 		return nil, err
 	}
+
 	app.templateCache[templateToRender] = t
 	return t, nil
 }
