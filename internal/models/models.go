@@ -142,3 +142,31 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 
 	return newTransactionID, nil
 }
+
+// InsertOrder insert a new order and returns new its id
+func (m *DBModel) InsertOrder(order Order) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var newOrderId int
+	//goland:noinspection ALL
+	stmt := `
+		insert into orders (widget_id, transaction_id, status_id, quantity,
+		                          amount, created_at, updated_at)
+		values ($1, $2, $3, $4, $5, $6, $7)
+	`
+	err := m.DB.QueryRowContext(ctx, stmt,
+		order.WidgetID,
+		order.TransactionID,
+		order.StatusID,
+		order.Quantity,
+		order.Amount,
+		time.Now(),
+		time.Now(),
+	).Scan(&newOrderId)
+	if err != nil {
+		return 0, err
+	}
+
+	return newOrderId, nil
+}
