@@ -83,3 +83,4 @@ fabric.properties
 /tmp/
 /.api.toml
 /database.yml
+/.env

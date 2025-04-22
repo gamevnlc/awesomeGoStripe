@@ -13,6 +13,7 @@ tmp_dir = "tmp"
   exclude_unchanged = false
   follow_symlink = false
   full_bin = "STRIPE_SECRET=sk_test_ ./tmp/main"
+  full_bin = "$env:STRIPE_SECRET="dev"; $env:STRIPE_SECRET="dev"; air"
   include_dir = []
   include_ext = ["go", "tpl", "tmpl", "html", "gohtml"]
   include_file = []
