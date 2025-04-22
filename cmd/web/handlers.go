@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"awesomeWebV2/internal/models"
+	"net/http"
+)
 
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
@@ -47,8 +50,21 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 	stringMap["publishable_key"] = app.config.stripe.key
+
+	widget := models.Widget{
+		ID:             1,
+		Name:           "Custom widget",
+		Description:    "Custom widget",
+		InventoryLevel: 10,
+		Price:          1000,
+	}
+
+	data := make(map[string]interface{})
+	data["widget"] = widget
+
 	err := app.renderTemplate(w, r, "buy-once", &templateData{
 		StringMap: stringMap,
+		Data:      data,
 	}, "stripe-js")
 	if err != nil {
 		app.errorLog.Println(err)
