@@ -2,6 +2,7 @@ package main
 
 import (
 	"awesomeWebV2/internal/driver"
+	"awesomeWebV2/internal/models"
 	"flag"
 	"fmt"
 	"log"
@@ -29,6 +30,7 @@ type application struct {
 	infoLog  *log.Logger
 	errorLog *log.Logger
 	version  string
+	DB       models.DBModel
 }
 
 func (app *application) serve() error {
@@ -71,6 +73,7 @@ func main() {
 		infoLog:  infoLog,
 		errorLog: errorLog,
 		version:  version,
+		DB:       models.DBModel{DB: conn},
 	}
 
 	err = app.serve()
