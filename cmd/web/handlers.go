@@ -6,6 +6,13 @@ import (
 	"net/http"
 )
 
+// Home display the home page
+func (app *application) Home(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(w, r, "home", nil); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "terminal", nil, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
@@ -20,7 +27,6 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	}
 
 	// read posted data
-
 	cardHolder := r.Form.Get("cardholder_name")
 	email := r.Form.Get("email")
 	paymentIntent := r.Form.Get("payment_intent")
@@ -49,6 +55,12 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	expiryMonth := pm.Card.ExpMonth
 	expiryYear := pm.Card.ExpYear
 
+	// create a new customer
+
+	// create a new order
+
+	// create a new transaction
+
 	data := make(map[string]interface{})
 	data["cardholder"] = cardHolder
 	data["email"] = email
@@ -60,6 +72,8 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	data["expiry_month"] = expiryMonth
 	data["expiry_year"] = expiryYear
 	data["bank_return_code"] = pi.Charges.Data[0].ID
+
+	// Should write this data to session and then redirect user to new page
 
 	if err := app.renderTemplate(w, r, "succeeded", &templateData{
 		Data: data,
