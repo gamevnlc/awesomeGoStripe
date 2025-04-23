@@ -74,6 +74,8 @@ type Transaction struct {
 	TransactionStatusID int       `json:"transaction_status_id"`
 	CreatedAt           time.Time `json:"-"`
 	UpdatedAt           time.Time `json:"-"`
+	ExpiryMonth         int       `json:"expiry_month"`
+	ExpiryYear          int       `json:"expiry_year"`
 }
 
 // User is the type for users
@@ -172,6 +174,31 @@ func (m *DBModel) InsertOrder(order Order) (int, error) {
 		order.StatusID,
 		order.Quantity,
 		order.Amount,
+		time.Now(),
+		time.Now(),
+	).Scan(&newOrderId)
+	if err != nil {
+		return 0, err
+	}
+
+	return newOrderId, nil
+}
+
+// InsertCustomer insert a new order and returns new its id
+func (m *DBModel) InsertCustomer(c Customer) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var newOrderId int
+	//goland:noinspection ALL
+	stmt := `
+		insert into customers (first_name, last_name, email, created_at, updated_at)
+		values ($1, $2, $3, $4, $5)
+	`
+	err := m.DB.QueryRowContext(ctx, stmt,
+		c.FirstName,
+		c.LastName,
+		c.Email,
 		time.Now(),
 		time.Now(),
 	).Scan(&newOrderId)
