@@ -3,6 +3,7 @@ package main
 import (
 	"awesomeWebV2/internal/driver"
 	"awesomeWebV2/internal/models"
+	"encoding/gob"
 	"flag"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
@@ -57,6 +58,8 @@ func (app *application) serve() error {
 }
 
 func main() {
+	gob.Register(map[string]interface{}{})
+
 	var cfg config
 
 	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen on")
