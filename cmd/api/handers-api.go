@@ -4,6 +4,7 @@ import (
 	"awesomeWebV2/internal/cards"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"github.com/stripe/stripe-go/v72"
 	"net/http"
 	"strconv"
 )
@@ -15,6 +16,12 @@ type stripePayload struct {
 	Email         string `json:"email"`
 	LastFour      string `json:"last_four"`
 	Plan          string `json:"plan"`
+	CardBrand     string `json:"card_brand"`
+	ExpiryMonth   string `json:"exp_month"`
+	ExpiryYear    string `json:"exp_year"`
+	ProductID     string `json:"product_id"`
+	FirstName     string `json:"first_name"`
+	LastName      string `json:"last_name"`
 }
 
 type jsonResponse struct {
@@ -117,23 +124,31 @@ func (app *application) CreateCustomerAndSubscribeToPlan(w http.ResponseWriter, 
 		Currency: data.Currency,
 	}
 
+	okay := true
+	var subscription *stripe.Subscription
+
 	stripeCustomer, msg, err := card.CreateCustomer(data.PaymentMethod, data.Email)
 
 	if err != nil {
 		app.errorLog.Println(err)
-		return
+		okay = false
 	}
 
-	subscriptionID, err := card.SubscribeToPlan(stripeCustomer, data.Plan, data.Email, data.LastFour, "")
+	if okay {
+		subscription, err = card.SubscribeToPlan(stripeCustomer, data.Plan, data.Email, data.LastFour, "")
 
-	if err != nil {
-		app.errorLog.Println(err)
-		return
+		if err != nil {
+			app.errorLog.Println(err)
+			okay = false
+		}
+
+		app.infoLog.Println("Subscription ID is", subscription.ID)
 	}
 
-	app.infoLog.Println("Subscription ID is", subscriptionID)
+	//if okay {
+	//
+	//}
 
-	okay := true
 	//msg := ""
 	resp := jsonResponse{
 		OK:      okay,
