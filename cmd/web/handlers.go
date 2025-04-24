@@ -3,6 +3,7 @@ package main
 import (
 	"awesomeWebV2/internal/cards"
 	"awesomeWebV2/internal/models"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
 	"time"
@@ -251,18 +252,19 @@ func (app *application) SaveOrder(order models.Order) (int, error) {
 // ChargeOnce displays the page to buy one the produce
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 
-	widget := models.Widget{
-		ID:             1,
-		Name:           "Custom widget",
-		Description:    "Custom widget",
-		InventoryLevel: 10,
-		Price:          1000,
+	id := chi.URLParam(r, "id")
+	widgetID, _ := strconv.Atoi(id)
+
+	widget, err := app.DB.GetWidget(widgetID)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
 	}
 
 	data := make(map[string]interface{})
 	data["widget"] = widget
 
-	err := app.renderTemplate(w, r, "buy-once", &templateData{
+	err = app.renderTemplate(w, r, "buy-once", &templateData{
 		Data: data,
 	}, "stripe-js")
 	if err != nil {
