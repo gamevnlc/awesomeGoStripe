@@ -33,6 +33,8 @@ type Widget struct {
 	Image          string    `json:"image"`
 	CreatedAt      time.Time `json:"-"`
 	UpdatedAt      time.Time `json:"-"`
+	IsRecurring    bool      `json:"is_recurring"`
+	PlanID         string    `json:"plan_id"`
 }
 
 // Order is the type for all orders
@@ -108,8 +110,8 @@ func (m *DBModel) GetWidget(id int) (Widget, error) {
 
 	//goland:noinspection ALL
 	row := m.DB.QueryRowContext(ctx, `
-		select id, name, description, inventory_level, price, image,
-	    created_at, updated_at 
+		select id, name, description, inventory_level, price, coalesce(image, ''),
+		       is_recurring, plan_id, created_at, updated_at
 		from 
 		    widgets 
 		where id = $1
@@ -121,6 +123,8 @@ func (m *DBModel) GetWidget(id int) (Widget, error) {
 		&widget.InventoryLevel,
 		&widget.Price,
 		&widget.Image,
+		&widget.IsRecurring,
+		&widget.PlanID,
 		&widget.CreatedAt,
 		&widget.UpdatedAt,
 	)
