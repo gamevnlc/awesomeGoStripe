@@ -137,13 +137,13 @@
                     plan: '{{$widget.PlanID}}',
                     payment_method: result.paymentMethod.id,
                     email: document.getElementById("cardholder-email").value,
-                    last_four: result.paymentMethod.last4,
+                    last_four: result.paymentMethod.card.last4,
                     product_id: document.getElementById("product_id").value,
                     card_brand: result.paymentMethod.card.brand,
                     exp_month: result.paymentMethod.card.exp_month,
                     exp_year: result.paymentMethod.card.exp_year,
                     first_name: document.getElementById("first-name").value,
-                    last_name: document.getElementById("last_name").value,
+                    last_name: document.getElementById("last-name").value,
                     amount: document.getElementById("amount").value
                 }
 
