@@ -138,7 +138,7 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 	stmt := `
 		insert into transactions (amount, currency, last_four, bank_return_code,
 		                          transaction_status_id, created_at, updated_at)
-		values ($1, $2, $3, $4, $5, $6, $7)
+		values ($1, $2, $3, $4, $5, $6, $7) returning id 
 	`
 	err := m.DB.QueryRowContext(ctx, stmt,
 		txn.Amount,
@@ -164,15 +164,16 @@ func (m *DBModel) InsertOrder(order Order) (int, error) {
 	var newOrderId int
 	//goland:noinspection ALL
 	stmt := `
-		insert into orders (widget_id, transaction_id, status_id, quantity,
+		insert into orders (widget_id, transaction_id, status_id, quantity, customer_id,
 		                          amount, created_at, updated_at)
-		values ($1, $2, $3, $4, $5, $6, $7)
+		values ($1, $2, $3, $4, $5, $6, $7, $8) returning id
 	`
 	err := m.DB.QueryRowContext(ctx, stmt,
 		order.WidgetID,
 		order.TransactionID,
 		order.StatusID,
 		order.Quantity,
+		order.CustomerID,
 		order.Amount,
 		time.Now(),
 		time.Now(),
@@ -193,7 +194,7 @@ func (m *DBModel) InsertCustomer(c Customer) (int, error) {
 	//goland:noinspection ALL
 	stmt := `
 		insert into customers (first_name, last_name, email, created_at, updated_at)
-		values ($1, $2, $3, $4, $5)
+		values ($1, $2, $3, $4, $5) returning id
 	`
 	err := m.DB.QueryRowContext(ctx, stmt,
 		c.FirstName,
