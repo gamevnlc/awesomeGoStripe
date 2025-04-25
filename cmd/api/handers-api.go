@@ -282,9 +282,17 @@ func (app *application) CreateAuthToken(w http.ResponseWriter, r *http.Request) 
 	token, err := models.GenerateToken(user.ID, 24*time.Hour, models.ScopeAuthentication)
 	if err != nil {
 		app.badRequest(w, r, err)
+		return
 	}
-	// Send response
 
+	//Saves token to database
+	err = app.DB.InsertToken(token, user)
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	// Send response
 	var payload struct {
 		Error   bool          `json:"error"`
 		Message string        `json:"message"`

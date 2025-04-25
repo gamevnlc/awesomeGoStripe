@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
@@ -43,4 +44,29 @@ func GenerateToken(userID int, ttl time.Duration, scope string) (*Token, error) 
 	token.Hash = hash[:]
 
 	return token, nil
+}
+
+func (m *DBModel) InsertToken(t *Token, u User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var newTokenId int
+	//goland:noinspection ALL
+	stmt := `
+		insert into tokens (user_id, name, email, token_hash, created_at, updated_at)
+		values ($1, $2, $3, $4, $5, $6) returning id
+	`
+	err := m.DB.QueryRowContext(ctx, stmt,
+		u.ID,
+		u.LastName,
+		u.Email,
+		t.Hash,
+		time.Now(),
+		time.Now(),
+	).Scan(&newTokenId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
