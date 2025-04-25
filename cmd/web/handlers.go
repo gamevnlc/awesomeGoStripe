@@ -297,3 +297,11 @@ func (app *application) BronzePlanReceipt(w http.ResponseWriter, r *http.Request
 		app.errorLog.Println(err)
 	}
 }
+
+// LoginPage displays a login page
+func (app *application) LoginPage(w http.ResponseWriter, r *http.Request) {
+	err := app.renderTemplate(w, r, "login", &templateData{})
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+}
