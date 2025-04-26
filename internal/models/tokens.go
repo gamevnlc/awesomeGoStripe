@@ -63,14 +63,15 @@ func (m *DBModel) InsertToken(t *Token, u User) error {
 	var newTokenId int
 	//goland:noinspection ALL
 	stmt := `
-		insert into tokens (user_id, name, email, token_hash, created_at, updated_at)
-		values ($1, $2, $3, $4, $5, $6) returning id
+		insert into tokens (user_id, name, email, token_hash, expiry, created_at, updated_at)
+		values ($1, $2, $3, $4, $5, $6, $7) returning id
 	`
 	err = m.DB.QueryRowContext(ctx, stmt,
 		u.ID,
 		u.LastName,
 		u.Email,
 		t.Hash,
+		t.Expiry,
 		time.Now(),
 		time.Now(),
 	).Scan(&newTokenId)
@@ -97,9 +98,10 @@ func (m *DBModel) GetUserForToken(token string) (*User, error) {
 		inner join tokens t on u.id = t.user_id
 		where 
 		    t.token_hash = $1
+			and t.expiry > $2
 	`
 
-	err := m.DB.QueryRowContext(ctx, query, tokenHash[:]).Scan(
+	err := m.DB.QueryRowContext(ctx, query, tokenHash[:], time.Now()).Scan(
 		&user.ID,
 		&user.FirstName,
 		&user.LastName,

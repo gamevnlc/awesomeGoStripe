@@ -341,7 +341,7 @@ func (app *application) authenticateToken(r *http.Request) (*models.User, error)
 
 	token := headerParts[1]
 
-	if len(token) != 22 {
+	if len(token) != 26 {
 		return nil, errors.New("invalid token length")
 	}
 
