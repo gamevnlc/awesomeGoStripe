@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/base32"
 	"encoding/base64"
 	"time"
 )
@@ -37,7 +38,7 @@ func GenerateToken(userID int, ttl time.Duration, scope string) (*Token, error) 
 		return nil, err
 	}
 
-	token.PlaintText = base64.StdEncoding.WithPadding(base64.NoPadding).EncodeToString(randomBytes)
+	token.PlaintText = base32.StdEncoding.WithPadding(base64.NoPadding).EncodeToString(randomBytes)
 
 	hash := sha256.Sum256([]byte(token.PlaintText))
 
@@ -91,7 +92,7 @@ func (m *DBModel) GetUserForToken(token string) (*User, error) {
 	//goland:noinspection ALL
 	query := `
 		select 
-		    u.id, u.first_name, u.last_name, u.email, 
+		    u.id, u.first_name, u.last_name, u.email
 		from users u
 		inner join tokens t on u.id = t.user_id
 		where 

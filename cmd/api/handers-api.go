@@ -312,6 +312,7 @@ func (app *application) CheckAuthentication(w http.ResponseWriter, r *http.Reque
 	// validate the token and get associated user
 	user, err := app.authenticateToken(r)
 	if err != nil {
+		fmt.Println(err)
 		app.invalidCredentials(w)
 		return
 	}
