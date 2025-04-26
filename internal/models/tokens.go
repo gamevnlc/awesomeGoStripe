@@ -50,13 +50,22 @@ func (m *DBModel) InsertToken(t *Token, u User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	//delete existing tokens
+
+	//goland:noinspection ALL
+	query := `delete from tokens where user_id = $1`
+	_, err := m.DB.ExecContext(ctx, query, u.ID)
+	if err != nil {
+		return err
+	}
+
 	var newTokenId int
 	//goland:noinspection ALL
 	stmt := `
 		insert into tokens (user_id, name, email, token_hash, created_at, updated_at)
 		values ($1, $2, $3, $4, $5, $6) returning id
 	`
-	err := m.DB.QueryRowContext(ctx, stmt,
+	err = m.DB.QueryRowContext(ctx, stmt,
 		u.ID,
 		u.LastName,
 		u.Email,
