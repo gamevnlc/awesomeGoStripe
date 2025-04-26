@@ -4,11 +4,13 @@ import (
 	"awesomeWebV2/internal/cards"
 	"awesomeWebV2/internal/models"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/stripe/stripe-go/v72"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -327,6 +329,22 @@ func (app *application) CheckAuthentication(w http.ResponseWriter, r *http.Reque
 
 func (app *application) authenticateToken(r *http.Request) (*models.User, error) {
 	var u models.User
+
+	authorizationHeader := r.Header.Get("Authorization")
+	if authorizationHeader == "" {
+		return nil, errors.New("no authorization header")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return nil, errors.New("invalid authorization header")
+	}
+
+	token := headerParts[1]
+
+	if len(token) != 26 {
+		return nil, errors.New("invalid token length")
+	}
 
 	return &u, nil
 }
