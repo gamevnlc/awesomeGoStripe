@@ -73,7 +73,7 @@ type Transaction struct {
 	Amount              int       `json:"amount"`
 	Currency            string    `json:"currency"`
 	LastFour            string    `json:"last_four"`
-	BackReturnCode      string    `json:"back_return_code"`
+	BankReturnCode      string    `json:"bank_return_code"`
 	TransactionStatusID int       `json:"transaction_status_id"`
 	CreatedAt           time.Time `json:"-"`
 	UpdatedAt           time.Time `json:"-"`
@@ -152,7 +152,7 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 		txn.Amount,
 		txn.Currency,
 		txn.LastFour,
-		txn.BackReturnCode,
+		txn.BankReturnCode,
 		txn.ExpiryMonth,
 		txn.ExpiryYear,
 		txn.PaymentIntent,
