@@ -23,6 +23,13 @@ type config struct {
 		secret string
 		key    string
 	}
+
+	smtp struct {
+		host     string
+		port     int
+		username string
+		password string
+	}
 }
 
 type application struct {
@@ -54,6 +61,11 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4001, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "host=localhost port=5432 dbname=widgets user=postgres password= sslmode=disable", "DSN")
+	flag.StringVar(&cfg.smtp.host, "smtphost", "sandbox.smtp.mailtrap.io", "SMTP server host")
+	flag.IntVar(&cfg.smtp.port, "smtpport", 587, "SMTP server port")
+	flag.StringVar(&cfg.smtp.username, "smtpuser", "2712a76d84b78b", "SMTP server username")
+	flag.StringVar(&cfg.smtp.password, "smtppass", "33001a194e770f", "SMTP server password")
+
 	flag.Parse()
 
 	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
