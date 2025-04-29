@@ -83,6 +83,7 @@ func main() {
 	//set up session
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
+	//session.Store = pgxstore.New(conn)
 
 	tc := make(map[string]*template.Template)
 
